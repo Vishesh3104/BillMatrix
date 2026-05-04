@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BillMatrix — Smart GST Billing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/landing.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="nav">
+        <div class="nav-logo">
+            <div class="nav-logo-icon">B</div>
+            BillMatrix
+        </div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#spotlight">Modules</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#testimonials">Customers</a></li>
+            <li><a href="#">Resources</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn-ghost" onclick="goToLogin()">Sign In</button>
+            <button class="btn-primary" onclick="goToSignup()">Sign Up Now</button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">
+            <div class="hero-badge-dot"></div>
+            GST compliant billing software
+        </div>
+        <h1>Smart <span>GST Billing</span><br>for Modern Businesses</h1>
+        <p class="hero-sub">
+            Manage invoices, products, and GST calculations effortlessly —
+            built for sellers who want speed, accuracy, and control.
+        </p>
+        <div class="hero-ctas">
+            <button class="btn-hero-primary" onclick="goToSignup()">Start my free trial</button>
+            <button class="btn-hero-outline" onclick="goToLogin()">Request a demo</button>
+        </div>
+
+        <!-- DASHBOARD MOCKUP -->
+        <div class="hero-dashboard">
+            <div class="dashboard-window">
+                <div class="dashboard-topbar">
+                    <div class="dots">
+                        <div class="dot r"></div>
+                        <div class="dot y"></div>
+                        <div class="dot g"></div>
+                    </div>
+                    <div class="db-logo">📊 BillMatrix</div>
+                    <div class="db-search"></div>
+                </div>
+                <div class="dashboard-body">
+                    <div class="db-sidebar">
+                        <div class="db-nav-item active">🏠 Home</div>
+                        <div class="db-nav-item">📦 Items</div>
+                        <div class="db-nav-item">🏦 Banking</div>
+                        <div class="db-nav-item">💰 Sales</div>
+                        <div class="db-nav-item">👥 Customers</div>
+                        <div class="db-nav-item">🧾 Invoices</div>
+                        <div class="db-nav-item">📊 Reports</div>
+                        <div class="db-nav-item">📁 Documents</div>
+                    </div>
+                    <div class="db-content">
+                        <div class="db-row">
+                            <div class="db-kpi">
+                                <div class="db-kpi-label">Total Receivables</div>
+                                <div class="db-kpi-value">₹3,84,500</div>
+                                <div class="db-kpi-sub">Current ₹42,250 &nbsp;|&nbsp; <span style="color:#EF4444">Overdue ₹12,500</span></div>
+                                <div class="db-bar-row">
+                                    <div class="db-bar" style="height:60%;background:#1656F0"></div>
+                                    <div class="db-bar" style="height:80%;background:#1656F0"></div>
+                                    <div class="db-bar" style="height:45%;background:#1656F0"></div>
+                                    <div class="db-bar" style="height:90%;background:#F5A623"></div>
+                                    <div class="db-bar" style="height:65%;background:#1656F0"></div>
+                                    <div class="db-bar" style="height:75%;background:#1656F0"></div>
+                                    <div class="db-bar" style="height:55%;background:#1656F0"></div>
+                                    <div class="db-bar" style="height:85%;background:#1656F0;opacity:1"></div>
+                                </div>
+                            </div>
+                            <div class="db-kpi">
+                                <div class="db-kpi-label">Total Payables</div>
+                                <div class="db-kpi-value">₹22,54,500</div>
+                                <div class="db-kpi-sub">Current ₹2,42,250 &nbsp;|&nbsp; <span style="color:#EF4444">Overdue ₹10,200</span></div>
+                                <div class="db-bar-row">
+                                    <div class="db-bar" style="height:40%;background:#8B5CF6"></div>
+                                    <div class="db-bar" style="height:70%;background:#8B5CF6"></div>
+                                    <div class="db-bar" style="height:55%;background:#8B5CF6"></div>
+                                    <div class="db-bar" style="height:85%;background:#8B5CF6;opacity:1"></div>
+                                    <div class="db-bar" style="height:60%;background:#8B5CF6"></div>
+                                    <div class="db-bar" style="height:75%;background:#8B5CF6"></div>
+                                    <div class="db-bar" style="height:50%;background:#F5A623"></div>
+                                    <div class="db-bar" style="height:65%;background:#8B5CF6"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="db-table-area">
+                            <div class="db-table-head">
+                                <div class="db-th">Invoice</div>
+                                <div class="db-th">Customer</div>
+                                <div class="db-th">Amount</div>
+                                <div class="db-th">Status</div>
+                            </div>
+                            <div class="db-row-item">
+                                <div class="db-td name">INV-0042</div>
+                                <div class="db-td">Ravi Industries</div>
+                                <div class="db-td">₹18,500</div>
+                                <div class="db-td"><span class="badge-paid">Paid</span></div>
+                            </div>
+                            <div class="db-row-item">
+                                <div class="db-td name">INV-0041</div>
+                                <div class="db-td">Mehta Traders</div>
+                                <div class="db-td">₹42,200</div>
+                                <div class="db-td"><span class="badge-due">Overdue</span></div>
+                            </div>
+                            <div class="db-row-item">
+                                <div class="db-td name">INV-0040</div>
+                                <div class="db-td">Shah Enterprises</div>
+                                <div class="db-td">₹9,800</div>
+                                <div class="db-td"><span class="badge-paid">Paid</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MIGRATE BANNER -->
+    <div class="migrate-banner reveal">
+        <div class="migrate-icon">📂</div>
+        <div class="migrate-text">
+            <h4>Migrate to BillMatrix</h4>
+            <p>Easily move from Tally, Busy, or other billing software to BillMatrix in minutes!</p>
+        </div>
+        <button class="btn-migrate">Contact us →</button>
+    </div>
+
+    <!-- TRUST STRIP -->
+    <div class="trust-strip">
+        <span class="trust-strip-label">Trusted by 10,000+ businesses across India</span>
+        <div class="trust-logos">
+            <span class="trust-logo">ICICI</span>
+            <span class="trust-logo">HDFC</span>
+            <span class="trust-logo">TATA</span>
+            <span class="trust-logo">Reliance</span>
+            <span class="trust-logo">Zoho</span>
+            <span class="trust-logo">Asian Paints</span>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-section">
+        <div class="stat-item reveal"><h3>10K+</h3><p>Active Businesses</p></div>
+        <div class="stat-item reveal delay-1"><h3>1M+</h3><p>Invoices Generated</p></div>
+        <div class="stat-item reveal delay-2"><h3>99.9%</h3><p>GST Accuracy</p></div>
+        <div class="stat-item reveal delay-3"><h3>4.8★</h3><p>Customer Rating</p></div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="features-section" id="features">
+        <div class="features-header reveal">
+            <div class="section-label">Core Features</div>
+            <h2 class="section-title">Everything your billing needs</h2>
+            <p class="section-sub">A powerful, GST-compliant platform built for retailers, wholesalers, and distributors across India.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal delay-1"><div class="feature-icon">🧾</div><h3>Smart Invoice Generation</h3><p>Create professional GST invoices in seconds with auto-calculation of CGST, SGST, and IGST. Share via WhatsApp, email, or print.</p></div>
+            <div class="feature-card reveal delay-2"><div class="feature-icon">📦</div><h3>Product Management</h3><p>Add, update, and manage your entire product catalog with HSN codes, GST rates, units, and real-time stock tracking.</p></div>
+            <div class="feature-card reveal delay-3"><div class="feature-icon">📊</div><h3>Sales & Analytics</h3><p>Track daily sales, monitor customer payments, and get actionable insights with visual dashboards and downloadable reports.</p></div>
+            <div class="feature-card reveal delay-1"><div class="feature-icon">🏦</div><h3>Connected Banking</h3><p>Auto-reconcile bank transactions with invoices. Track incoming and outgoing payments from ICICI, HDFC, YES Bank, and more.</p></div>
+            <div class="feature-card reveal delay-2"><div class="feature-icon">🤖</div><h3>GST Return Filing</h3><p>Generate GSTR-1, GSTR-3B, and e-way bills directly. Stay fully compliant without a CA visiting your shop every month.</p></div>
+            <div class="feature-card reveal delay-3"><div class="feature-icon">⚡</div><h3>Workflow Automation</h3><p>Set up recurring invoices, payment reminders, and low stock alerts so nothing slips through the cracks.</p></div>
+        </div>
+    </section>
+
+    <!-- SPOTLIGHT -->
+    <section class="section" id="spotlight">
+        <div class="spotlight-section" style="padding:0;">
+            <div class="spotlight-sticky reveal-left">
+                <div class="section-label">SPOTLIGHT</div>
+                <h2 class="section-title">Engineered to Unlock Business Growth</h2>
+                <p class="section-sub">Powerful GST billing tools designed to simplify your business operations and help you scale faster with confidence.</p>
+            </div>
+            <div class="spotlight-grid">
+                <div class="spot-card reveal delay-1"><h4>GST Compliance</h4><p>Generate e-invoices, e-Way bills, and file GST returns automatically.</p><div class="spot-visual green-accent"><span>e-Invoice</span><span class="pushed-badge">✔ Pushed</span></div></div>
+                <div class="spot-card reveal delay-2"><h4>Accounting Across Devices</h4><p>Work seamlessly on mobile, desktop, or web with real-time sync.</p><div class="spot-visual" style="text-align:center;">🍎 &nbsp; 🤖 &nbsp; 🪟</div></div>
+                <div class="spot-card reveal delay-1"><h4>Connected Banking</h4><p>Track payments and reconcile transactions automatically.</p><div class="spot-visual blue">HSBC • ICICI • YES BANK</div></div>
+                <div class="spot-card reveal delay-2"><h4>Automation</h4><p>Set workflows, reminders, and recurring invoices effortlessly.</p><div class="spot-visual">Trigger → Filter → Action</div></div>
+                <div class="spot-card reveal delay-1"><h4>Sell Globally</h4><p>Handle multi-currency transactions with ease across borders.</p><div class="spot-visual gold">₹ 2,000.00</div></div>
+                <div class="spot-card reveal delay-2"><h4>Team Collaboration</h4><p>Work with your team and manage roles and permissions securely.</p><div class="spot-visual">@Kavin: Follow up payment 📌</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="section-label">Client Success</div>
+        <h2 class="section-title">Make the switch to the future of business billing</h2>
+        <div class="testimonials-layout">
+            <div class="testimonial-list">
+                <div class="testimonial-item reveal"><img src="https://randomuser.me/api/portraits/men/32.jpg" class="t-avatar" alt=""><div><p class="t-text">"BillMatrix has become the backbone of my shop's finance and operations. Invoicing used to take 20 minutes — now it's 2."</p><div class="t-name">Rahul Sharma</div><div class="t-role">Retail Shop Owner, Surat</div></div></div>
+                <div class="testimonial-item reveal delay-1"><img src="https://randomuser.me/api/portraits/men/45.jpg" class="t-avatar" alt=""><div><p class="t-text">"Best accounting software made for businesses in India. GST filing used to be a nightmare — not anymore."</p><div class="t-name">Vishal Mehta</div><div class="t-role">Wholesale Distributor, Ahmedabad</div></div></div>
+                <div class="testimonial-item reveal delay-2"><img src="https://randomuser.me/api/portraits/women/22.jpg" class="t-avatar" alt=""><div><p class="t-text">"One billing solution for all my 4 outlets. The reports are clean and I finally understand my business numbers."</p><div class="t-name">Priya Nambolan</div><div class="t-role">Director, FruitBag</div></div></div>
+                <div class="testimonial-item reveal delay-3"><img src="https://randomuser.me/api/portraits/men/60.jpg" class="t-avatar" alt=""><div><p class="t-text">"User-friendly, comprehensive, and highly compliant. I trust BillMatrix completely for my GST filings."</p><div class="t-name">Tarun Kumar Jain</div><div class="t-role">Director, CW Industries</div></div></div>
+            </div>
+            <div>
+                <div class="trust-card reveal-right">
+                    <div class="trust-quote">"</div>
+                    <div class="trust-big-text">I TRUST BILLMATRIX FOR MY BUSINESS</div>
+                    <p style="color:rgba(255,255,255,0.5);font-size:14px;">Joining 10,000+ businesses who've simplified their billing</p>
+                    <div class="trust-logos-dark">
+                        <div class="trust-logo-dark">Asian Paints</div>
+                        <div class="trust-logo-dark">Palsgaard</div>
+                        <div class="trust-logo-dark">Nippon Paint</div>
+                        <div class="trust-logo-dark">SamAgri</div>
+                        <div class="trust-logo-dark">Thanal</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+        <div class="faq-layout">
+            <div class="reveal-left">
+                <div class="section-label">Got Questions?</div>
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-sub">Find quick answers about BillMatrix — setup, features, GST compliance, and more.</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item reveal"><div class="faq-q">How do I get started with BillMatrix?<div class="faq-icon">+</div></div><div class="faq-a">Sign up for a free trial — no credit card needed. Add your business details, GST number, and start creating invoices within minutes.</div></div>
+                <div class="faq-item reveal delay-1"><div class="faq-q">Is BillMatrix fully GST compliant?<div class="faq-icon">+</div></div><div class="faq-a">Yes. BillMatrix supports CGST, SGST, IGST, CESS calculations. You can generate e-invoices, e-Way bills, and directly file GSTR-1 and GSTR-3B returns.</div></div>
+                <div class="faq-item reveal delay-2"><div class="faq-q">Can I use BillMatrix on mobile?<div class="faq-icon">+</div></div><div class="faq-a">Absolutely. BillMatrix works on web, Android, and iOS with full feature parity and real-time sync across all devices.</div></div>
+                <div class="faq-item reveal delay-3"><div class="faq-q">Can I migrate from Tally or Busy?<div class="faq-icon">+</div></div><div class="faq-a">Yes. We provide guided migration support to move your products, customers, and historical data from Tally, Busy, or any other billing software.</div></div>
+                <div class="faq-item reveal delay-4"><div class="faq-q">Is my data secure?<div class="faq-icon">+</div></div><div class="faq-a">Your data is encrypted at rest and in transit, stored on Indian servers, and backed up daily. We are SOC2 compliant and follow all DPDP Act guidelines.</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Start Managing Your GST Billing Smarter</h2>
+        <p>Join thousands of sellers simplifying their billing with BillMatrix. Create invoices, manage products, and track sales — all in one place.</p>
+        <div class="cta-btns">
+            <button class="btn-hero-primary" onclick="goToSignup()">Get Started Free →</button>
+            <button class="btn-hero-outline" onclick="goToLogin()">View Dashboard</button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <div class="footer-logo">BillMatrix</div>
+                <p>Smart GST billing software designed for modern Indian businesses to manage invoices, products, and sales effortlessly.</p>
+                <div class="footer-socials">
+                    <div class="social-btn">f</div>
+                    <div class="social-btn">t</div>
+                    <div class="social-btn">in</div>
+                    <div class="social-btn">ig</div>
+                </div>
+            </div>
+            <div class="footer-col"><h5>Product</h5><a href="#">Home</a><a href="#">Features</a><a href="#">Pricing</a><a href="#">Dashboard</a></div>
+            <div class="footer-col"><h5>Solutions</h5><a href="#">Retail Billing</a><a href="#">GST Filing</a><a href="#">Inventory</a><a href="#">e-Invoicing</a></div>
+            <div class="footer-col"><h5>Company</h5><a href="#">About Us</a><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Support</a></div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 BillMatrix. All rights reserved.</span>
+            <span>Made with ❤️ for Indian businesses</span>
+        </div>
+    </footer>
+
+    <!-- landing.js loaded at bottom so DOM is ready -->
+    <script src="/js/landing.js"></script>
+</body>
+</html>

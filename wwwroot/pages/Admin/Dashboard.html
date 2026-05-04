@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BillMatrix — Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/pages/Admin/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <div class="logo-icon">
+            <svg viewBox="220 80 240 240">
+                <circle fill="#3B4BC8" cx="340" cy="200" r="120"/>
+                <path fill="white" d="M322 145 L322 155 L302 155 L302 165 L378 165 L378 155 L358 155 L358 145 Z"/>
+                <rect fill="white" x="306" y="168" width="12" height="55" rx="2"/>
+                <rect fill="white" x="334" y="168" width="12" height="55" rx="2"/>
+                <rect fill="white" x="362" y="168" width="12" height="55" rx="2"/>
+                <path fill="white" d="M298 223 L298 230 Q298 235 305 235 L375 235 Q382 235 382 230 L382 223 Z"/>
+                <path fill="none" stroke="white" stroke-width="3" d="M290 140 L340 120 L390 140"/>
+            </svg>
+        </div>
+        <div class="brand-text">
+            <div class="brand-name">BillMatrix</div>
+            <div class="brand-role">Admin Panel</div>
+        </div>
+    </div>
+
+    <div class="sidebar-section-label">Control Panel</div>
+    <a class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')" href="#">
+        <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a class="nav-item" data-page="users" onclick="showPage('users')" href="#">
+        <span class="nav-icon">👤</span> Users
+        <span class="nav-badge" id="usersBadge">—</span>
+    </a>
+    <a class="nav-item" data-page="businesses" onclick="showPage('businesses')" href="#">
+        <span class="nav-icon">🏢</span> Businesses
+    </a>
+    <a class="nav-item" data-page="companies" onclick="showPage('companies')" href="#">
+        <span class="nav-icon">🏭</span> Companies
+    </a>
+    <a class="nav-item" data-page="products" onclick="showPage('products')" href="#">
+        <span class="nav-icon">📦</span> Products
+    </a>
+    <a class="nav-item" data-page="transactions" onclick="showPage('transactions')" href="#">
+        <span class="nav-icon">💸</span> Transactions
+    </a>
+    <a class="nav-item" data-page="reports" onclick="showPage('reports')" href="#">
+        <span class="nav-icon">📈</span> Reports
+    </a>
+    <a class="nav-item" data-page="settings" onclick="showPage('settings')" href="#">
+        <span class="nav-icon">⚙️</span> Settings
+    </a>
+
+    <div class="sidebar-bottom">
+        <div class="user-card" onclick="toggleLogoutPopup()" style="position:relative;">
+            <div class="user-avatar" id="adminAvatar">SA</div>
+            <div class="user-info">
+                <div class="u-name" id="adminName">Super Admin</div>
+                <div class="u-role">Administrator</div>
+            </div>
+            <div id="logoutPopup" style="display:none;position:absolute;bottom:54px;left:0;right:0;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:6px;z-index:999;">
+                <div onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--red);"
+                     onmouseover="this.style.background='var(--red-dim)'" onmouseout="this.style.background='none'">
+                    🚪 Logout
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+    <header class="header">
+        <div class="page-title" id="headerTitle">Admin Dashboard</div>
+        <div class="header-right">
+            <div class="icon-btn">🔔</div>
+            <div class="icon-btn">🖥️</div>
+        </div>
+    </header>
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="content active" id="page-dashboard">
+        <div class="kpi-grid">
+            <div class="kpi-card blue">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-label">Total Users</div>
+                <div class="kpi-value" data-stat="totalUsers">—</div>
+                <div class="kpi-sub"><span class="kpi-badge up">↑ 8%</span> this month</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="kpi-icon">📦</div>
+                <div class="kpi-label">Total Sellers</div>
+                <div class="kpi-value" data-stat="totalSellers">—</div>
+                <div class="kpi-sub"><span class="kpi-badge up">↑ 5%</span> this month</div>
+            </div>
+            <div class="kpi-card teal">
+                <div class="kpi-icon">🏪</div>
+                <div class="kpi-label">Total Shopkeepers</div>
+                <div class="kpi-value" data-stat="totalShopkeepers">—</div>
+                <div class="kpi-sub"><span class="kpi-badge up">↑ 9%</span> this month</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="kpi-icon">⚠️</div>
+                <div class="kpi-label">Pending Approvals</div>
+                <div class="kpi-value">3</div>
+                <div class="kpi-sub"><span class="kpi-badge down">Action required</span></div>
+            </div>
+        </div>
+
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+            <div class="kpi-card green">
+                <div class="kpi-icon">📦</div>
+                <div class="kpi-label">Total Products</div>
+                <div class="kpi-value" data-stat="totalProducts">—</div>
+                <div class="kpi-sub"><span class="kpi-badge up">Admin managed</span></div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="kpi-icon">🏭</div>
+                <div class="kpi-label">Total Companies</div>
+                <div class="kpi-value" data-stat="totalCompanies">—</div>
+                <div class="kpi-sub"><span class="kpi-badge up">↑ 3 new</span> this week</div>
+            </div>
+            <div class="kpi-card yellow">
+                <div class="kpi-icon">🧾</div>
+                <div class="kpi-label">Total Invoices</div>
+                <div class="kpi-value" data-stat="totalInvoices">—</div>
+                <div class="kpi-sub"><span class="kpi-badge up">↑ 22%</span> this month</div>
+            </div>
+        </div>
+
+        <div class="row row-3">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Platform Growth — New Signups</span>
+                    <span class="panel-action">Last 12 Months</span>
+                </div>
+                <div class="panel-body">
+                    <div class="chart-wrap" style="height:220px"><canvas id="growthChart"></canvas></div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Users by Role</span></div>
+                <div class="panel-body">
+                    <div class="chart-wrap"><canvas id="roleChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-2">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Recent Registrations</span>
+                    <span class="panel-action" onclick="showPage('users')">View All →</span>
+                </div>
+                <table class="data-table">
+                    <thead><tr><th>Business</th><th>Owner</th><th>Role</th><th>Joined</th><th>Status</th></tr></thead>
+                    <tbody id="recentRegTbody">
+                        <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">System Activity</span></div>
+                <div id="activity-container">
+                    <div class="activity-item">
+                        <div class="activity-dot blue"></div>
+                        <div><div class="activity-text">Loading activity...</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== USERS PAGE ===== -->
+    <div class="content" id="page-users">
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="kpi-card blue"><div class="kpi-icon">👥</div><div class="kpi-label">Total Users</div><div class="kpi-value" data-stat="usersTotal">—</div></div>
+            <div class="kpi-card green"><div class="kpi-icon">✅</div><div class="kpi-label">Active</div><div class="kpi-value" data-stat="usersActive">—</div></div>
+            <div class="kpi-card yellow"><div class="kpi-icon">⏳</div><div class="kpi-label">Pending Verify</div><div class="kpi-value" data-stat="usersPending">—</div></div>
+            <div class="kpi-card red"><div class="kpi-icon">🚫</div><div class="kpi-label">Suspended</div><div class="kpi-value" data-stat="usersSuspended">—</div></div>
+        </div>
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="usersSearch" placeholder="Search users by name, email, phone..."></div>
+            <div style="display:flex;gap:10px;">
+                <div style="position:relative">
+  <button class="filter-btn" onclick="toggleDropdown('roleDD')">⬇ Role</button>
+  <div id="roleDD" class="filter-dropdown" style="display:none">
+    <label><input type="checkbox" value="shopkeeper" checked onchange="applyUserFilters()"> Shopkeeper</label>
+    <label><input type="checkbox" value="seller" checked onchange="applyUserFilters()"> Seller</label>
+    <label><input type="checkbox" value="admin" checked onchange="applyUserFilters()"> Admin</label>
+  </div>
+</div>
+<div style="position:relative">
+  <button class="filter-btn" onclick="toggleDropdown('statusDD')">⬇ Status</button>
+  <div id="statusDD" class="filter-dropdown" style="display:none">
+    <label><input type="checkbox" value="active" checked onchange="applyUserFilters()"> Active</label>
+    <label><input type="checkbox" value="pending" checked onchange="applyUserFilters()"> Pending</label>
+    <label><input type="checkbox" value="suspended" checked onchange="applyUserFilters()"> Suspended</label>
+  </div>
+</div>
+                <button class="header-btn blue" onclick="document.getElementById('addUserModal').style.display='flex'">+ Add User</button>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">All Users</span>
+                <span class="panel-action" onclick="exportTableExcel('usersTbody', ['Name','Email','Phone','Role','Business','GSTIN','Status'], 'users.xlsx')">Export Excel</span></div>
+            <table class="data-table">
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Business</th><th>GSTIN</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="usersTbody">
+                    <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:30px;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div id="addUserModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2>➕ Add New User</h2>
+                <button class="modal-close" onclick="closeAddUserModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalToast" class="modal-toast"></div>
+                <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">Select Role</div>
+                <div class="modal-role-tabs">
+                    <button class="modal-role-tab active" id="rtab-shopkeeper" onclick="setUserRole('shopkeeper')">🛒 Shopkeeper</button>
+                    <button class="modal-role-tab" id="rtab-seller" onclick="setUserRole('seller')">📦 Seller / Wholesaler</button>
+                </div>
+                <div class="modal-section-label">Personal Details</div>
+                <div class="modal-field">
+                    <label>Full Name *</label>
+                    <input id="mu_fullName" type="text" placeholder="e.g. Ravi Patel">
+                </div>
+                <div class="modal-field-row">
+                    <div class="modal-field">
+                        <label>Mobile Number *</label>
+                        <input id="mu_phone" type="tel" placeholder="XXXXXXXXXX" maxlength="10">
+                    </div>
+                    <div class="modal-field">
+                        <label>Email Address *</label>
+                        <input id="mu_email" type="email" placeholder="email@business.com">
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <label>Password *</label>
+                    <div class="modal-pass-wrap">
+                        <input id="mu_password" type="password" placeholder="Min. 8 characters">
+                        <button class="modal-eye-btn" onclick="toggleModalPass()" type="button">👁</button>
+                    </div>
+                </div>
+                <div class="modal-section-label">Business Details</div>
+                <div class="modal-field">
+                    <label>Business Name *</label>
+                    <input id="mu_businessName" type="text" placeholder="Your Shop / Company Name">
+                </div>
+                <div class="modal-field">
+                    <label>GST Number (GSTIN)</label>
+                    <input id="mu_gstNumber" type="text" placeholder="e.g. 24AABCT3518Q1ZS" maxlength="15" style="text-transform:uppercase;">
+                </div>
+                <div class="modal-field">
+                    <label>Address *</label>
+                    <input id="mu_address" type="text" placeholder="Shop no., Street, Area">
+                </div>
+                <div class="modal-field-row">
+                    <div class="modal-field">
+                        <label>City *</label>
+                        <input id="mu_city" type="text" placeholder="Surat">
+                    </div>
+                    <div class="modal-field">
+                        <label>State *</label>
+                        <select id="mu_state">
+                            <option value="">Select State</option>
+                            <option>Gujarat</option><option>Maharashtra</option><option>Rajasthan</option>
+                            <option>Delhi</option><option>Karnataka</option><option>Tamil Nadu</option>
+                            <option>Uttar Pradesh</option><option>West Bengal</option><option>Punjab</option>
+                            <option>Andhra Pradesh</option><option>Telangana</option><option>Kerala</option>
+                            <option>Madhya Pradesh</option><option>Haryana</option><option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-field" style="max-width:180px;">
+                    <label>Pincode *</label>
+                    <input id="mu_pincode" type="text" placeholder="395001" maxlength="6">
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="modal-btn-cancel" onclick="resetAddUserForm()">Clear</button>
+                <button class="modal-btn-submit" id="muSubmitBtn" onclick="submitAddUser()">
+                    <span id="muBtnText">Create User</span>
+                    <div id="muSpinner" class="modal-spinner"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BUSINESSES PAGE ===== -->
+    <div class="content" id="page-businesses">
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="kpi-card blue"><div class="kpi-label">Total Businesses</div><div class="kpi-value" data-stat="totalBusinesses">—</div></div>
+            <div class="kpi-card green"><div class="kpi-label">Verified</div><div class="kpi-value" data-stat="verified">—</div></div>
+            <div class="kpi-card yellow"><div class="kpi-label">Pending KYC</div><div class="kpi-value" data-stat="pending">—</div></div>
+            <div class="kpi-card red"><div class="kpi-label">Suspended</div><div class="kpi-value">0</div></div>
+        </div>
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="businessesSearch" placeholder="Search by name, GSTIN, city..."></div>
+            <div style="display:flex;gap:10px;">
+                <button class="filter-btn">⬇ Type</button>
+                <button class="filter-btn">⬇ State</button>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">All Businesses</span><span class="panel-action" onclick="exportTableExcel('businesses-tbody', ['Business Name','Owner','GSTIN','Type','State','Status'], 'businesses.xlsx')">Export Excel</span></div>
+            <table class="data-table">
+                <thead><tr><th>Business Name</th><th>Owner</th><th>GSTIN</th><th>Type</th><th>State</th><th>Status</th></tr></thead>
+                <tbody id="businesses-tbody">
+                    <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== COMPANIES PAGE ===== -->
+    <div class="content" id="page-companies">
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="companiesSearch" placeholder="Search companies by name, GST..."></div>
+        </div>
+        <div class="panel" style="margin-bottom:16px">
+            <div class="panel-header"><span class="panel-title">Add New Company</span></div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" id="companyName" class="form-input" placeholder="e.g. Gujarat FMCG Pvt Ltd">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GST Number</label>
+                    <input type="text" id="companyGST" class="form-input" placeholder="e.g. 24AABCT3518Q1ZS" maxlength="15">
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label class="form-label">Address</label>
+                    <input type="text" id="companyAddress" class="form-input" placeholder="Full registered address">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="header-btn green" onclick="saveCompany()">💾 Save Company</button>
+                <button class="filter-btn">Cancel</button>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">All Companies <span style="color:var(--muted);font-weight:400;" id="companiesCount"></span></span>
+                <span class="panel-action" onclick="exportTableExcel('companies-tbody', ['Company Name','GST Number','Address','Status'], 'companies.xlsx')">Export Excel</span>
+            </div>
+            <table class="data-table">
+                <thead><tr><th>Company Name</th><th>GST Number</th><th>Address</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="companies-tbody">
+                    <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== PRODUCTS PAGE ===== -->
+    <div class="content" id="page-products">
+        <div style="background:var(--red-dim);border:1px solid rgba(244,63,94,0.25);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red);margin-bottom:16px;">
+            🔒 Products created here are globally available to all Sellers and Shopkeepers. MRP and GST are fixed — Sellers cannot change them.
+        </div>
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="productsSearch" placeholder="Search products by name, code, HSN..."></div>
+            <div style="display:flex;gap:10px;">
+                <button class="filter-btn">⬇ Company</button>
+                <button class="filter-btn">⬇ Category</button>
+                <button class="header-btn green" onclick="saveProduct()">💾 Save Product</button>
+            </div>
+        </div>
+        <div class="panel" style="margin-bottom:16px">
+            <div class="panel-header">
+                <span class="panel-title">Add New Product</span>
+                <span style="font-size:12px;color:var(--muted)">MRP and GST set here are fixed</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Product Name</label>
+                    <input type="text" id="pName" class="form-input" placeholder="e.g. Colgate MaxFresh 200g">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product Code</label>
+                    <input type="text" id="pCode" class="form-input" placeholder="Auto-generated or manual">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">HSN Code</label>
+                    <input type="text" id="pHSN" class="form-input" placeholder="e.g. 3306">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Company</label>
+                    <select class="form-input" id="productCompany">
+                        <option value="">Select Company</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-input" id="pCategory">
+                        <option>FMCG</option><option>Food</option><option>Personal Care</option>
+                        <option>Household</option><option>Beverages</option><option>Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Unit</label>
+                    <select class="form-input" id="pUnit">
+                        <option>Pcs</option><option>Pack</option><option>Kg</option>
+                        <option>Litre</option><option>Box</option><option>Bag</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">MRP (Fixed by Admin)</label>
+                    <input type="number" id="pMRP" class="form-input" placeholder="₹ per unit">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GST Percentage</label>
+                    <select class="form-input" id="pGST">
+                        <option>0%</option><option>5%</option><option>12%</option>
+                        <option>18%</option><option>28%</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="header-btn green" onclick="saveProduct()">💾 Save Product</button>
+                <button class="filter-btn">Cancel</button>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">All Products <span style="color:var(--muted);font-weight:400;" id="productsCount"></span></span>
+               <span class="panel-action" onclick="exportTableExcel('products-tbody', ['Product Name','Product Code','HSN Code','Company','Category','Unit','MRP','GST%'], 'products.xlsx')">Export Excel</span>
+            </div>
+            <table class="data-table">
+                <thead><tr><th>Product Name</th><th>Product Code</th><th>HSN Code</th><th>Company</th><th>Category</th><th>Unit</th><th>MRP</th><th>GST %</th></tr></thead>
+                <tbody id="products-tbody">
+                    <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:30px;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== TRANSACTIONS PAGE ===== -->
+    <div class="content" id="page-transactions">
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="kpi-card green"><div class="kpi-label">Total Invoice Volume</div><div class="kpi-value">₹148 Cr</div><div class="kpi-sub"><span class="kpi-badge up">↑ 18%</span> this month</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">Invoices This Month</div><div class="kpi-value">1,84,200</div></div>
+            <div class="kpi-card yellow"><div class="kpi-label">GST Processed</div><div class="kpi-value">₹26.4 Cr</div></div>
+            <div class="kpi-card purple"><div class="kpi-label">e-Invoices Pushed</div><div class="kpi-value">82,400</div></div>
+        </div>
+        <div class="panel" style="margin-bottom:16px">
+            <div class="panel-header"><span class="panel-title">Transaction Volume — Last 12 Months</span></div>
+            <div class="panel-body"><div class="chart-wrap" style="height:220px"><canvas id="txnChart"></canvas></div></div>
+        </div>
+        <div class="toolbar" style="margin-top:0">
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search transactions..."></div>
+            <div style="display:flex;gap:10px;">
+                <button class="filter-btn">📅 Date Range</button>
+                <button class="filter-btn">⬇ Business</button>
+                <button class="filter-btn">⬇ Type</button>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">Recent Transactions</span>
+                <span class="panel-action" onclick="exportTableExcel(null, ['Txn ID','Business','Type','Amount','CGST','SGST','IGST','Date','Status'], 'transactions.xlsx', document.querySelectorAll('[id=page-transactions] .data-table tbody tr'))">Export Excel</span></div>
+            <table class="data-table">
+                <thead><tr><th>Txn ID</th><th>Business</th><th>Type</th><th>Amount</th><th>CGST</th><th>SGST</th><th>IGST</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td>TXN-928471</td><td>Gujarat FMCG Hub</td><td>Sale Invoice</td><td>₹3,12,800</td><td>₹18,768</td><td>₹18,768</td><td>—</td><td>23 Mar 2026</td><td><span class="badge green">Success</span></td></tr>
+                    <tr><td>TXN-928470</td><td>Sharma Kirana</td><td>Sale Invoice</td><td>₹18,500</td><td>—</td><td>—</td><td>₹3,330</td><td>23 Mar 2026</td><td><span class="badge green">Success</span></td></tr>
+                    <tr><td>TXN-928469</td><td>Jain Distributors</td><td>Purchase Bill</td><td>₹92,400</td><td>₹5,544</td><td>₹5,544</td><td>—</td><td>22 Mar 2026</td><td><span class="badge yellow">Processing</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== REPORTS PAGE ===== -->
+    <div class="content" id="page-reports">
+        <div class="report-tabs">
+            <div class="report-tab active" onclick="setAdminReportTab(this,'rpt-gst')">🧾 GST Collected</div>
+            <div class="report-tab" onclick="setAdminReportTab(this,'rpt-sales')">📤 Sales Report</div>
+            <div class="report-tab" onclick="setAdminReportTab(this,'rpt-invoice')">📋 Invoice Count</div>
+        </div>
+        <div id="rpt-gst">
+            <div class="row row-2" style="margin-bottom:16px">
+                <div class="panel"><div class="panel-header"><span class="panel-title">GST Collected Trend</span></div><div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="gstTrendChart"></canvas></div></div></div>
+                <div class="panel"><div class="panel-header"><span class="panel-title">GST by Tax Type</span></div><div class="panel-body"><div class="chart-wrap"><canvas id="gstTypeChart"></canvas></div></div></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">GST Collected Report</span><div style="display:flex;gap:8px;"><span class="panel-action">GSTR-1</span><span style="color:var(--muted)">|</span><span class="panel-action">GSTR-3B</span><span style="color:var(--muted)">|</span>
+                    <span class="panel-action" onclick="exportTableExcel('gstReportTbody', ['Tax Type','Taxable Value','Tax Collected','No. of Invoices'], 'gst-report.xlsx')">Export Excel</span></div></div>
+                <table class="data-table">
+                    <thead><tr><th>Tax Type</th><th>Taxable Value</th><th>Tax Collected</th><th>No. of Invoices</th></tr></thead>
+                    <tbody>
+                        <tr><td>CGST 6%</td><td>₹82,42,000</td><td>₹4,94,520</td><td>4,820</td></tr>
+                        <tr><td>SGST 6%</td><td>₹82,42,000</td><td>₹4,94,520</td><td>4,820</td></tr>
+                        <tr><td>IGST 18%</td><td>₹34,18,400</td><td>₹6,15,312</td><td>2,140</td></tr>
+                        <tr><td><strong>Total</strong></td><td><strong>₹2,20,22,400</strong></td><td><strong>₹17,57,952</strong></td><td><strong>16,260</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="rpt-sales" style="display:none">
+            <div class="row row-2" style="margin-bottom:16px">
+                <div class="panel"><div class="panel-header"><span class="panel-title">Platform Sales Trend</span></div><div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="adminSalesChart"></canvas></div></div></div>
+                <div class="panel"><div class="panel-header"><span class="panel-title">Sales by Business Type</span></div><div class="panel-body"><div class="chart-wrap"><canvas id="bizTypeChart"></canvas></div></div></div>
+            </div>
+        </div>
+        <div id="rpt-invoice" style="display:none">
+            <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+                <div class="kpi-card blue"><div class="kpi-label">Total Invoices (Month)</div><div class="kpi-value" data-stat="totalInvoicesMonth">1,84,200</div><div class="kpi-sub"><span class="kpi-badge up">↑ 22%</span></div></div>
+                <div class="kpi-card green"><div class="kpi-label">Paid Invoices</div><div class="kpi-value" data-stat="paidInvoices">1,72,400</div><div class="kpi-sub"><span class="kpi-badge up">93.6% paid</span></div></div>
+                <div class="kpi-card red"><div class="kpi-label">Pending / Overdue</div><div class="kpi-value" data-stat="pendingInvoices">11,800</div><div class="kpi-sub"><span class="kpi-badge down">6.4% pending</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <div class="content" id="page-settings">
+        <div class="row row-2">
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Platform Settings</span></div>
+                <div class="panel-body">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="form-group"><label class="form-label">Platform Name</label><input class="form-input" value="BillMatrix" type="text"></div>
+                        <div class="form-group"><label class="form-label">Admin Email</label><input class="form-input" value="admin@billmatrix.in" type="email"></div>
+                        <div class="form-group"><label class="form-label">GST API Key</label><input class="form-input" value="••••••••••••••••••••" type="password"></div>
+                        <div class="form-group"><label class="form-label">Default State (GST)</label><input class="form-input" value="Gujarat (24)" type="text"></div>
+                        <div class="form-group"><label class="form-label">Default Currency</label><input class="form-input" value="INR (₹)" type="text"></div>
+                        <div class="form-group"><label class="form-label">Company State Code</label><input class="form-input" value="24" type="text"></div>
+                    </div>
+                    <button class="save-btn">Save Changes</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">System Toggles</span></div>
+                <div class="panel-body">
+                    <div class="toggle-row"><div class="toggle-label"><h4>e-Invoice Integration</h4><p>Auto-push invoices to NIC e-Invoice portal</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                    <div class="toggle-row"><div class="toggle-label"><h4>GST Auto-Filing</h4><p>Enable GSTR-1 / GSTR-3B auto-filing</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                    <div class="toggle-row"><div class="toggle-label"><h4>New User Registrations</h4><p>Allow new businesses to sign up</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                    <div class="toggle-row"><div class="toggle-label"><h4>Maintenance Mode</h4><p>Show maintenance page to all users</p></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+                    <div class="toggle-row"><div class="toggle-label"><h4>Two-Factor Authentication</h4><p>Enforce 2FA for all admin logins</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                    <button class="save-btn">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer"></div>
+
+</div><!-- end main -->
+
+<script src="/js/auth.js"></script>
+<script src="/pages/Admin/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BillMatrix — Seller Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/pages/Seller/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+</head>
+<body>
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <div class="logo-icon">
+            <svg viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="100" fill="#3B4BC8"/>
+                <path d="M50 75 L100 45 L150 75" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <rect x="58" y="79" width="84" height="10" rx="4" fill="white"/>
+                <rect x="64" y="94" width="13" height="50" rx="3" fill="white"/>
+                <rect x="93" y="94" width="13" height="50" rx="3" fill="white"/>
+                <rect x="122" y="94" width="13" height="50" rx="3" fill="white"/>
+                <rect x="58" y="147" width="84" height="12" rx="5" fill="white"/>
+            </svg>
+        </div>
+        <div class="brand-text">
+            <div class="brand-name">BillMatrix</div>
+            <div class="brand-role">Seller Portal</div>
+        </div>
+    </div>
+
+    <div class="sidebar-section-label">Main Menu</div>
+
+    <a class="nav-item active" data-page="dashboard"   onclick="showPage('dashboard')">  <span class="nav-icon">📊</span> Dashboard</a>
+    <a class="nav-item"        data-page="products"    onclick="showPage('products')">   <span class="nav-icon">📦</span> Products</a>
+    <a class="nav-item"        data-page="inventory"   onclick="showPage('inventory')">  <span class="nav-icon">🏭</span> Inventory</a>
+    <a class="nav-item"        data-page="bills"       onclick="showPage('bills')">      <span class="nav-icon">🧾</span> Bills <span class="nav-badge" id="badge-bills">0</span></a>
+    <a class="nav-item"        data-page="requests"    onclick="showPage('requests')">   <span class="nav-icon">📋</span> Requests <span class="nav-badge" id="badge-req">0</span></a>
+    <a class="nav-item"        data-page="shopkeepers" onclick="showPage('shopkeepers')"><span class="nav-icon">🏪</span> Shopkeepers</a>
+    <a class="nav-item"        data-page="invoices"    onclick="showPage('invoices')">   <span class="nav-icon">📄</span> Invoices</a>
+    <a class="nav-item"        data-page="payments"    onclick="showPage('payments')">   <span class="nav-icon">💳</span> Payments</a>
+    <a class="nav-item"        data-page="reports"     onclick="showPage('reports')">    <span class="nav-icon">📈</span> Reports</a>
+
+    <div class="sidebar-section-label">Billing</div>
+    <a class="nav-item" data-page="purchase-bill" onclick="showPage('purchase-bill')"><span class="nav-icon">🛒</span> Purchase Bill</a>
+    <a class="nav-item" data-page="sales-invoice" onclick="showPage('sales-invoice')"><span class="nav-icon">💸</span> Sales Invoice</a>
+
+    <div class="sidebar-bottom">
+        <div class="user-card" onclick="toggleUserPopup()">
+            <div class="user-avatar" id="userAvatar">S</div>
+            <div>
+                <div class="u-name" id="userName">Seller</div>
+                <div class="u-role" id="userRole">Seller</div>
+            </div>
+        </div>
+        <div id="userPopup" class="user-popup">
+            <div class="logout-btn" onclick="logout()">⏻ &nbsp;Logout</div>
+        </div>
+    </div>
+</aside>
+
+<!-- ===================== MAIN ===================== -->
+<div class="main">
+    <header class="header">
+        <div class="page-title" id="headerTitle">Dashboard</div>
+        <div class="header-right">
+            <div style="position:relative;" id="seller-notif-wrap">
+                <div class="icon-btn" onclick="toggleNotif()">
+                    🔔
+                    <span id="seller-notif-count" style="position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:100px;display:none;">0</span>
+                </div>
+                <div id="seller-notif-panel">
+                    <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-weight:700;font-size:13.5px;">Notifications</span>
+                        <span onclick="clearNotifs()" style="font-size:11px;color:var(--muted);cursor:pointer;">Clear all</span>
+                    </div>
+                    <div id="seller-notif-list" style="max-height:300px;overflow-y:auto;">
+                        <div style="text-align:center;color:var(--muted);padding:22px;font-size:13px;">No notifications yet</div>
+                    </div>
+                </div>
+            </div>
+            <div class="icon-btn">⚙️</div>
+        </div>
+    </header>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="content active" id="page-dashboard">
+        <div class="kpi-grid">
+            <div class="kpi-card blue">   <div class="kpi-icon">🛒</div><div class="kpi-label">Purchase This Month</div><div class="kpi-value" id="d-purchase">—</div><div class="kpi-sub"><span class="kpi-badge info">vs last month</span></div></div>
+            <div class="kpi-card green">  <div class="kpi-icon">💰</div><div class="kpi-label">Sales This Month</div>   <div class="kpi-value" id="d-sales">—</div>   <div class="kpi-sub"><span class="kpi-badge up">vs last month</span></div></div>
+            <div class="kpi-card purple"> <div class="kpi-icon">📈</div><div class="kpi-label">Profit This Month</div>  <div class="kpi-value" id="d-profit">—</div>   <div class="kpi-sub"><span class="kpi-badge up">Net earnings</span></div></div>
+            <div class="kpi-card yellow"> <div class="kpi-icon">⏳</div><div class="kpi-label">Pending Payments</div>  <div class="kpi-value" id="d-pending">—</div>   <div class="kpi-sub"><span class="kpi-badge down">Action needed</span></div></div>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="kpi-card teal">   <div class="kpi-icon">🧾</div><div class="kpi-label">GST Collected This Month</div><div class="kpi-value" id="d-gst">—</div><div class="kpi-sub"><span class="kpi-badge info">CGST + SGST + IGST</span></div></div>
+            <div class="kpi-card orange"> <div class="kpi-icon">⚠️</div><div class="kpi-label">Low Stock Items</div>          <div class="kpi-value" id="d-lowstock">—</div><div class="kpi-sub"><span class="kpi-badge warn">Needs reorder</span></div></div>
+        </div>
+        <div class="row row-3">
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Monthly Sales</span><span class="panel-action">Last 12 Months</span></div>
+                <div class="panel-body"><div class="chart-wrap" style="height:220px;"><canvas id="dashSalesChart"></canvas></div></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Sales by Category</span></div>
+                <div class="panel-body"><div class="chart-wrap"><canvas id="dashCatChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="row row-2">
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Recent Bills</span><span class="panel-action" onclick="showPage('bills')">View All →</span></div>
+                <table class="data-table">
+                    <thead><tr><th>Bill No</th><th>Type</th><th>Party</th><th>Date</th><th>Amount</th><th>GST</th><th>Status</th></tr></thead>
+                    <tbody id="d-recent-bills"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Pending Requests</span><span class="panel-action" onclick="showPage('requests')">View All →</span></div>
+                <div id="d-requests" style="padding:14px;"><div style="text-align:center;color:var(--muted);padding:20px;">Loading...</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PRODUCTS ===== -->
+    <div class="content" id="page-products">
+        <div class="alert-box blue">ℹ️ Products are managed by Admin only. You can view products and see your current stock.</div>
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="prod-search" placeholder="Search products..."></div>
+            <button class="filter-btn">⬇ Category</button>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">All Products <span id="prod-count" style="color:var(--muted);font-weight:400;"></span></span><span class="panel-action" onclick="exportProducts()">Export</span></div>
+            <table class="data-table">
+                <thead><tr><th>Product Name</th><th>Code</th><th>Category</th><th>Unit</th><th>MRP</th><th>GST %</th><th>Purchase Price</th><th>Stock</th></tr></thead>
+                <tbody id="products-tbody"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== INVENTORY ===== -->
+    <div class="content" id="page-inventory">
+        <div class="alert-box blue">ℹ️ Stock levels update automatically when you create a Purchase Bill. Manual edits are disabled.</div>
+        <div class="kpi-grid">
+            <div class="kpi-card blue">  <div class="kpi-icon">📦</div><div class="kpi-label">Total SKUs</div>       <div class="kpi-value" id="inv-total">—</div></div>
+            <div class="kpi-card yellow"><div class="kpi-icon">⚠️</div><div class="kpi-label">Low Stock</div>        <div class="kpi-value" id="inv-low">—</div><div class="kpi-sub"><span class="kpi-badge warn">Needs reorder</span></div></div>
+            <div class="kpi-card red">  <div class="kpi-icon">❌</div><div class="kpi-label">Out of Stock</div>     <div class="kpi-value" id="inv-out">—</div></div>
+            <div class="kpi-card green"> <div class="kpi-icon">💰</div><div class="kpi-label">Inventory Value</div> <div class="kpi-value" id="inv-val">—</div></div>
+        </div>
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="inv-search" placeholder="Search inventory..."></div>
+            <button class="header-btn" onclick="showPage('purchase-bill')">+ Purchase Bill</button>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">Stock Levels</span><button class="filter-btn">⬇ Category</button></div>
+            <table class="data-table">
+                <thead><tr><th>Product</th><th>SKU</th><th>In Stock</th><th>Purchase Price</th><th>Stock Level</th><th>Status</th></tr></thead>
+                <tbody id="inventory-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== BILLS ===== -->
+    <div class="content" id="page-bills">
+        <div class="report-tabs">
+            <div class="report-tab active" onclick="setBillTab(this,'tab-allbills')">📋 All Bills</div>
+            <div class="report-tab" onclick="setBillTab(this,'tab-requests')">
+                📬 Shopkeeper Requests
+                <span id="req-badge" style="background:var(--red);color:#fff;font-size:10px;padding:1px 7px;border-radius:100px;margin-left:5px;vertical-align:middle;">0</span>
+            </div>
+        </div>
+        <div id="tab-allbills">
+            <div class="toolbar">
+                <div class="search-box"><span>🔍</span><input type="text" id="bills-search" placeholder="Search bills..."></div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="filter-btn">⬇ Type</button>
+                    <button class="header-btn"       onclick="showPage('purchase-bill')">+ Purchase Bill</button>
+                    <button class="header-btn green" onclick="showPage('sales-invoice')">+ Sales Invoice</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">All Bills</span><span class="panel-action" onclick="exportGST()">Export</span></div>
+                <table class="data-table">
+                    <thead><tr><th>Bill No</th><th>Type</th><th>Party Name</th><th>Date</th><th>Taxable</th><th>GST</th><th>Total</th><th>Status</th><th>PDF</th></tr></thead>
+                    <tbody id="all-bills-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tab-requests" style="display:none;">
+            <div class="alert-box yellow">⚠️ Accept requests to create an invoice automatically, or reject to decline.</div>
+            <div id="requests-container"><div style="text-align:center;color:var(--muted);padding:40px;">Loading...</div></div>
+        </div>
+    </div>
+
+    <!-- ===== REQUESTS ===== -->
+    <div class="content" id="page-requests">
+        <div class="stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
+            <div class="stat-card blue">  <div class="stat-label">Total Requests</div> <div class="stat-value" id="req-total">0</div>  <div class="stat-sub">This month</div></div>
+            <div class="stat-card amber"> <div class="stat-label">Pending</div>         <div class="stat-value" id="req-pending">0</div><div class="stat-sub">Awaiting action</div></div>
+            <div class="stat-card green"> <div class="stat-label">Accepted</div>        <div class="stat-value" id="req-accepted">0</div><div class="stat-sub">Converted to invoice</div></div>
+            <div class="stat-card red">   <div class="stat-label">Rejected</div>        <div class="stat-value" id="req-rejected">0</div><div class="stat-sub">This month</div></div>
+        </div>
+        <div id="requestList"></div>
+    </div>
+
+    <!-- ===== SHOPKEEPERS ===== -->
+    <div class="content" id="page-shopkeepers">
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="sk-search" placeholder="Search shopkeepers..."></div>
+            <button class="header-btn" onclick="toggleAddSK()">+ Add Shopkeeper</button>
+        </div>
+        <div class="panel" id="add-sk-panel" style="margin-bottom:14px;display:none;">
+            <div class="panel-header">
+                <span class="panel-title">All Shopkeepers — Select to Add</span>
+                <span class="panel-action" onclick="toggleAddSK()">Close ✕</span>
+            </div>
+            <div id="all-shopkeepers-list" style="max-height:300px;overflow-y:auto;">
+                <div style="text-align:center;color:var(--muted);padding:20px;">Loading...</div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">My Shopkeepers <span id="sk-count" style="color:var(--muted);font-weight:400;"></span></span>
+                <span class="panel-action">Export</span>
+            </div>
+            <table class="data-table">
+                <thead><tr><th>Business Name</th><th>Address</th><th>Phone</th><th>GST No.</th><th>Total Orders</th><th>Outstanding</th><th>Status</th></tr></thead>
+                <tbody id="shopkeepers-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== INVOICES ===== -->
+    <div class="content" id="page-invoices">
+        <div style="background:var(--bg3);border-radius:8px;padding:9px 14px;margin-bottom:14px;font-size:12px;color:var(--muted);">
+            💡 <strong style="color:var(--text);">GST Logic:</strong> Same state → CGST + SGST &nbsp;|&nbsp; Different state → IGST
+        </div>
+        <div class="toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" id="inv-search2" placeholder="Search invoices..."></div>
+            <span class="panel-action" style="font-size:13px;cursor:pointer;">Export GSTR-1</span>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">All Sales Invoices</span><span class="panel-action" onclick="exportInvoices()">Export</span></div>
+            <table class="data-table">
+                <thead><tr><th>Invoice #</th><th>Shopkeeper</th><th>Product</th><th>Date</th><th>Taxable</th><th>CGST</th><th>SGST</th><th>IGST</th><th>Total</th><th>Profit</th><th>Status</th><th>PDF</th></tr></thead>
+                <tbody id="invoices-tbody"><tr><td colspan="12" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== PAYMENTS ===== -->
+    <div class="content" id="page-payments">
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="kpi-card green"> <div class="kpi-label">Received This Month</div>  <div class="kpi-value" id="pay-received">—</div></div>
+            <div class="kpi-card yellow"><div class="kpi-label">Pending Payments</div>     <div class="kpi-value" id="pay-pending">—</div></div>
+            <div class="kpi-card blue">  <div class="kpi-label">Total Transactions</div>  <div class="kpi-value" id="pay-count">—</div></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">Payment Ledger</span><button class="header-btn" style="font-size:12px;padding:6px 12px;">+ Record Payment</button></div>
+            <table class="data-table">
+                <thead><tr><th>Date</th><th>Ref #</th><th>Party</th><th>Mode</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody id="payments-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== PURCHASE BILL ===== -->
+    <div class="content" id="page-purchase-bill">
+        <div class="alert-box blue">🛒 New Purchase Bill — Stock will auto-update on save.</div>
+        <div class="row row-2">
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">New Purchase Bill</span><span style="font-size:12px;color:var(--muted);">Stock updates automatically</span></div>
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Company Name</label><select id="pb-company" class="form-input"><option value="">Select Company</option></select></div>
+                    <div class="form-group"><label class="form-label">Bill Date</label><input type="date" id="pb-date" class="form-input"></div>
+                    <div class="form-group"><label class="form-label">Product</label><select id="pb-product" class="form-input"><option value="">Select Product</option></select></div>
+                    <div class="form-group"><label class="form-label">Product Code</label><input type="text" id="pb-code" class="form-input" readonly placeholder="Auto-filled"></div>
+                    <div class="form-group"><label class="form-label">GST %</label><input type="text" id="pb-gst" class="form-input" readonly placeholder="Auto-filled"></div>
+                    <div class="form-group"><label class="form-label">Quantity</label><input type="number" id="pb-qty" class="form-input" placeholder="Enter quantity" min="1"></div>
+                    <div class="form-group"><label class="form-label">Purchase Price (Per Unit)</label><input type="number" id="pb-price" class="form-input" placeholder="₹ per unit" min="0" step="0.01"></div>
+                    <div class="form-group"><label class="form-label">Payment Mode</label><select id="pb-mode" class="form-input"><option>Cash</option><option>UPI</option><option>NEFT</option><option>RTGS</option><option>Cheque</option></select></div>
+                </div>
+                <div class="totals-row">
+                    <div class="total-box"><div class="t-label">Subtotal</div>    <div class="t-value" id="pb-sub">₹0.00</div></div>
+                    <div class="total-box"><div class="t-label">GST Amount</div>  <div class="t-value" id="pb-gst-amt">₹0.00</div></div>
+                    <div class="total-box"><div class="t-label">Final Amount</div><div class="t-value" id="pb-total" style="color:var(--purple);">₹0.00</div></div>
+                </div>
+                <div class="form-actions">
+                    <button class="header-btn" onclick="savePurchaseBill()">💾 Save Purchase Bill</button>
+                    <button class="filter-btn" onclick="clearPB()">Cancel</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Recent Purchase Bills</span></div>
+                <table class="data-table">
+                    <thead><tr><th>Bill ID</th><th>Product</th><th>Company</th><th>Qty</th><th>Total</th><th>Date</th></tr></thead>
+                    <tbody id="pb-recent"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SALES INVOICE ===== -->
+    <div class="content" id="page-sales-invoice">
+        <div class="alert-box green">🧾 New Sales Invoice — Stock auto-decreases on save.</div>
+        <div class="row row-2">
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">New Sales Invoice</span><span style="font-size:12px;color:var(--muted);">Selling to Shopkeeper</span></div>
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Shopkeeper</label><select id="si-sk" class="form-input" onchange="updatePreview()"><option value="">Select Shopkeeper</option></select></div>
+                    <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" id="si-date" class="form-input"></div>
+                    <div class="form-group"><label class="form-label">Product</label><select id="si-product" class="form-input" onchange="onSIProduct()"><option value="">Select Product</option></select></div>
+                    <div class="form-group"><label class="form-label">Quantity</label><input type="number" id="si-qty" class="form-input" placeholder="Enter quantity" min="1" oninput="calcSI()"></div>
+                    <div class="form-group"><label class="form-label">MRP (Per Unit)</label><input type="text" id="si-mrp" class="form-input" readonly placeholder="Auto-filled"></div>
+                    <div class="form-group"><label class="form-label">GST Type</label><input type="text" id="si-gst-type" class="form-input" readonly value="CGST + SGST (Same State)"></div>
+                    <div class="form-group"><label class="form-label">GST %</label><input type="text" id="si-gst" class="form-input" readonly placeholder="Auto-filled"></div>
+                    <div class="form-group"><label class="form-label">Payment Mode</label><select id="si-mode" class="form-input"><option>Cash</option><option>UPI</option><option>NEFT</option><option>RTGS</option><option>Cheque</option></select></div>
+                </div>
+                <div class="totals-row">
+                    <div class="total-box"><div class="t-label">Subtotal (MRP×Qty)</div><div class="t-value" id="si-sub">₹0.00</div></div>
+                    <div class="total-box"><div class="t-label">GST Amount</div>         <div class="t-value" id="si-gst-amt">₹0.00</div></div>
+                    <div class="total-box"><div class="t-label">Final Amount</div>        <div class="t-value" id="si-total" style="color:var(--green);">₹0.00</div></div>
+                </div>
+                <div class="form-actions">
+                    <button class="header-btn green" onclick="saveSI()">💾 Save Sales Invoice</button>
+                    <button class="filter-btn" onclick="clearSI()">Cancel</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Invoice Preview</span></div>
+                <div class="panel-body">
+                    <div style="background:var(--bg3);border-radius:9px;padding:18px;font-size:13px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                            <div><div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--purple);">BillMatrix</div><div style="color:var(--muted);font-size:11px;">Sales Invoice</div></div>
+                            <div style="text-align:right;color:var(--muted);font-size:11.5px;"><div>Invoice #AUTO</div><div id="prev-date">—</div></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;padding:11px;background:var(--bg2);border-radius:8px;">
+                            <div><div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;">From</div><div style="font-weight:600;margin-top:3px;" id="prev-seller">—</div></div>
+                            <div><div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;">To</div><div style="font-weight:600;margin-top:3px;" id="prev-sk">—</div></div>
+                        </div>
+                        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;">
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <th style="text-align:left;padding:7px;color:var(--muted);font-weight:600;">Product</th>
+                                <th style="text-align:right;padding:7px;color:var(--muted);font-weight:600;">Qty</th>
+                                <th style="text-align:right;padding:7px;color:var(--muted);font-weight:600;">MRP</th>
+                                <th style="text-align:right;padding:7px;color:var(--muted);font-weight:600;">Total</th>
+                            </tr>
+                            <tr>
+                                <td style="padding:7px;" id="prev-prod">—</td>
+                                <td style="padding:7px;text-align:right;" id="prev-qty">—</td>
+                                <td style="padding:7px;text-align:right;" id="prev-mrp">—</td>
+                                <td style="padding:7px;text-align:right;font-weight:700;" id="prev-sub">—</td>
+                            </tr>
+                        </table>
+                        <div style="padding:11px;background:var(--bg2);border-radius:8px;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:var(--muted);">Subtotal</span><span id="prev-sub2">—</span></div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:var(--muted);" id="prev-gst-lbl">GST</span><span id="prev-gst-amt">—</span></div>
+                            <div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;border-top:1px solid var(--border);padding-top:8px;margin-top:6px;"><span>Total</span><span style="color:var(--green);" id="prev-total">—</span></div>
+                            <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);"><span style="color:var(--muted);">Your Profit</span><span class="profit-positive" id="prev-profit">—</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== REPORTS ===== -->
+    <div class="content" id="page-reports">
+        <div class="report-tabs">
+            <div class="report-tab active" onclick="setRptTab(this,'rpt-pb')">🛒 Purchase Report</div>
+            <div class="report-tab" onclick="setRptTab(this,'rpt-sales')">💸 Sales Report</div>
+            <div class="report-tab" onclick="setRptTab(this,'rpt-profit')">💰 Profit Report</div>
+            <div class="report-tab" onclick="setRptTab(this,'rpt-gst')">🧾 GST Report</div>
+        </div>
+        <div id="rpt-pb">
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Purchase Bills</span><span class="panel-action" onclick="exportPurchaseReport()">Export</span></div>
+                <table class="data-table">
+                    <thead><tr><th>Bill No</th><th>Company</th><th>Product</th><th>Date</th><th>Qty</th><th>Taxable</th><th>GST Paid</th><th>Total</th></tr></thead>
+                    <tbody id="rpt-pb-tbody"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="rpt-sales" style="display:none;">
+            <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="kpi-card green">  <div class="kpi-label">This Month Sales</div>  <div class="kpi-value" id="rpt-ms">—</div></div>
+                <div class="kpi-card blue">   <div class="kpi-label">This Month Profit</div> <div class="kpi-value" id="rpt-mp">—</div></div>
+                <div class="kpi-card orange">  <div class="kpi-label">Orders This Month</div> <div class="kpi-value" id="rpt-mo">—</div></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">Sales Invoices</span></div>
+                <table class="data-table">
+                    <thead><tr><th>Invoice #</th><th>Shopkeeper</th><th>Product</th><th>Qty</th><th>Selling Price</th><th>Total</th><th>Profit</th><th>Date</th></tr></thead>
+                    <tbody id="rpt-si-tbody"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="rpt-profit" style="display:none;">
+            <div class="row row-2">
+                <div class="panel"><div class="panel-header"><span class="panel-title">Profit by Product</span></div><div class="panel-body"><div class="chart-wrap"><canvas id="profitChart"></canvas></div></div></div>
+                <div class="panel">
+                    <div class="panel-header"><span class="panel-title">Top Profit Products</span></div>
+                    <table class="data-table">
+                        <thead><tr><th>Product</th><th>Units Sold</th><th>Revenue</th><th>Profit</th><th>Margin %</th></tr></thead>
+                        <tbody id="profit-tbody"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="rpt-gst" style="display:none;">
+            <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="kpi-card blue">  <div class="kpi-label">Total GST This Month</div><div class="kpi-value" id="gst-total">—</div></div>
+                <div class="kpi-card green"> <div class="kpi-label">CGST + SGST</div>          <div class="kpi-value" id="gst-cs">—</div></div>
+                <div class="kpi-card orange"><div class="kpi-label">IGST</div>                  <div class="kpi-value" id="gst-igst">—</div></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><span class="panel-title">GST Breakdown</span><span class="panel-action" onclick="exportGST()">Export GSTR-1</span></div>
+                <table class="data-table">
+                    <thead><tr><th>Invoice #</th><th>Shopkeeper</th><th>Date</th><th>Taxable</th><th>CGST</th><th>SGST</th><th>IGST</th><th>GST Type</th></tr></thead>
+                    <tbody id="gst-tbody"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div><!-- end .main -->
+
+<!-- ===================== CONFIRM MODAL ===================== -->
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-box">
+        <div class="modal-icon"  id="confirm-icon">❓</div>
+        <div class="modal-title" id="confirm-title">Confirm Action</div>
+        <div class="modal-msg"   id="confirm-msg">Are you sure?</div>
+        <div class="modal-btns">
+            <button class="filter-btn"  id="confirm-cancel">Cancel</button>
+            <button class="header-btn"  id="confirm-ok" style="background:var(--purple);">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div id="seller-toast"></div>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script src="/pages/Seller/dashboard.js"></script>
+
+</body>
+</html>
